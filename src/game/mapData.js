@@ -92,8 +92,24 @@ export function buildMap() {
 
 export const MAP = buildMap();
 
-export function isWalkable(c,r){
+export function isWalkable(c, r) {
   if (c<0||c>=COLS||r<0||r>=ROWS) return false;
-  const t=MAP[r][c];
-  return t===T.LAND||t===T.PATH||t===T.CITY;
+
+  // Block building footprint: centre tile and the tile directly above it
+  for (const city of CITIES) {
+    if (city.col === c && (city.row === r || city.row - 1 === r)) return false;
+  }
+
+  const t = MAP[r][c];
+  if (!(t===T.LAND||t===T.PATH||t===T.CITY)) return false;
+
+  // 1-tile buffer around mountains: LAND tiles adjacent to MOUN are impassable
+  if (t === T.LAND) {
+    for (const [dc, dr] of [[-1,0],[1,0],[0,-1],[0,1]]) {
+      const nc = c+dc, nr = r+dr;
+      if (nc>=0&&nc<COLS&&nr>=0&&nr<ROWS&&MAP[nr][nc]===T.MOUN) return false;
+    }
+  }
+
+  return true;
 }

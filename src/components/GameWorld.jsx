@@ -116,18 +116,31 @@ export default function GameWorld({ onEnterCity, completedIds = [] }) {
         for (let c=0;c<COLS;c++)
           drawTile(ctx, c, r, MAP[r][c], s.tick);
 
-      // Cities (buildings below player z-order)
+      // ── Z-sorted city rendering ──────────────────────────────
       const done = completedRef.current;
+      const playerRow = Math.round(s.py / TILE);
+
+      // Pass 1: buildings whose base row ≤ player row → behind player
       CITIES.forEach(city => {
-        const isDone  = done.includes(city.id);
-        const isNear  = nearRef.current?.id === city.id;
-        drawBuilding(ctx, city.col, city.row, city.color, isDone);
-        drawLabel(ctx, city.col, city.row, city.name, city.color, isDone, isNear);
-        if (isNear) drawPrompt(ctx, city.col, city.row, CITY_FULL_NAMES[city.id]);
+        if (city.row <= playerRow) {
+          drawBuilding(ctx, city.col, city.row, city.id, city.color, done.includes(city.id));
+        }
       });
 
-      // Player
+      // Player (between the two building passes)
       drawPlayer(ctx, s.px, s.py, s.dir, s.frame, s.moving);
+
+      // Pass 2: buildings whose base row > player row → in front of player
+      // Also draw all labels and prompts on top (always readable)
+      CITIES.forEach(city => {
+        const isDone = done.includes(city.id);
+        const isNear = nearRef.current?.id === city.id;
+        if (city.row > playerRow) {
+          drawBuilding(ctx, city.col, city.row, city.id, city.color, isDone);
+        }
+        drawLabel(ctx, city.col, city.row, city.id, city.name, city.color, isDone, isNear);
+        if (isNear) drawPrompt(ctx, city.col, city.row, city.id, CITY_FULL_NAMES[city.id], s.tick);
+      });
 
       // ── HUD ────────────────────────────────────────────────────
       // Top bar
