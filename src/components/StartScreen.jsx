@@ -27,7 +27,7 @@ export default function StartScreen({ onStart }) {
         </div>
 
         <button className="btn-primary" onClick={onStart}>Reise beginnen</button>
-        <span className="start-hint">4 Kapitel · 15 Fragen · Keine Zeitbegrenzung</span>
+        <span className="start-hint">4 Kapitel · 15 Fragen · 1 Zuordnungsrätsel · Keine Zeitbegrenzung</span>
       </div>
     </div>
   );

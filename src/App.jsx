@@ -3,6 +3,7 @@ import { CHAPTERS, TOTAL_QUESTIONS } from './data/gameData';
 import StartScreen    from './components/StartScreen';
 import ChapterIntro   from './components/ChapterIntro';
 import SceneQuestion  from './components/SceneQuestion';
+import MatchingGame   from './components/MatchingGame';
 import ProgressBar    from './components/ProgressBar';
 import EndScreen      from './components/EndScreen';
 import GameWorld      from './components/GameWorld';
@@ -34,6 +35,13 @@ export default function App() {
     const idx = CHAPTERS.findIndex(ch => ch.id === cityId);
     if (idx === -1) return;
     setState(s => ({ ...s, phase: PHASE.INTRO, chapterIndex: idx, sceneIndex: 0 }));
+  }
+
+  function handleEnterMatching() {
+    const finaleIdx = CHAPTERS.findIndex(c => c.id === FINALE_ID);
+    if (finaleIdx !== -1) {
+      setState(s => ({ ...s, phase: PHASE.SCENE, chapterIndex: finaleIdx, sceneIndex: 0 }));
+    }
   }
 
   function startScenes() {
@@ -75,6 +83,7 @@ export default function App() {
     return (
       <GameWorld
         onEnterCity={handleCitySelect}
+        onEnterMatching={handleEnterMatching}
         completedIds={state.completedCities}
       />
     );
@@ -99,7 +108,9 @@ export default function App() {
           <ChapterIntro chapter={chapter} onContinue={startScenes} />
         )}
         {state.phase === PHASE.SCENE && scene && (
-          <SceneQuestion key={scene.id} scene={scene} onCorrect={handleAnswered} />
+          scene.type === 'matching'
+            ? <MatchingGame   key={scene.id} scene={scene} onCorrect={handleAnswered} />
+            : <SceneQuestion  key={scene.id} scene={scene} onCorrect={handleAnswered} />
         )}
       </main>
     </div>

@@ -497,6 +497,30 @@ function _generic(ctx, cx, by, color, done) {
   ctx.fillStyle='#100e18'; ctx.fillRect(cx-4,by-10,8,10);
 }
 
+// ── Special location (Redaktion etc.) ────────────────────────
+export function drawSpecial(ctx, col, row, color, isNear) {
+  const bx = col*TILE - 7, by = row*TILE - 22;
+  ctx.fillStyle = '#060408'; ctx.fillRect(bx+2, by+30, 26, 3);
+  ctx.fillStyle = '#1c1a0c'; ctx.fillRect(bx, by+10, 26, 22);
+  ctx.fillStyle = '#242210';
+  for (let fy=0;fy<2;fy++) for (let fx=0;fx<2;fx++)
+    ctx.fillRect(bx+1+fx*12, by+12+fy*8, 11, 7);
+  ctx.fillStyle = isNear ? color+'cc' : '#221e0a';
+  [[3,11],[16,11],[3,20],[16,20]].forEach(([wx,wy]) => {
+    ctx.fillRect(bx+wx, by+wy, 5, 5);
+    if (isNear) { ctx.fillStyle='#ffffff18'; ctx.fillRect(bx+wx,by+wy,3,2); ctx.fillStyle=color+'cc'; }
+  });
+  ctx.fillStyle = '#0e0c06'; ctx.fillRect(bx+10, by+26, 6, 6);
+  ctx.fillStyle = '#2a2614'; ctx.fillRect(bx-1, by+8, 28, 3);
+  ctx.fillStyle = color+'66'; ctx.fillRect(bx, by+8, 26, 1);
+  ctx.fillStyle = '#1e1c0c'; ctx.fillRect(bx+1, by+2, 24, 7);
+  ctx.fillStyle = color+'55';
+  [1,7,13,19].forEach(nx => ctx.fillRect(bx+nx, by+2, 4, 3));
+  ctx.fillStyle = '#2a2414'; ctx.fillRect(bx+12, by-4, 1, 6);
+  ctx.fillStyle = color; ctx.fillRect(bx+13, by-4, 5, 3);
+  if (isNear) { ctx.fillStyle=color+'22'; ctx.fillRect(bx-4, by+28, 34, 6); }
+}
+
 // ── City label ────────────────────────────────────────────────
 export function drawLabel(ctx, col, row, id, name, color, done, isNear) {
   const buildH = BH[id] ?? 70;

@@ -36,6 +36,10 @@ export const CITY_FULL_NAMES = {
   wien:   'Wien',
 };
 
+export const SPECIALS = [
+  { id: 'matching', name: 'Redaktion', col: 13, row: 16, color: '#c09040' },
+];
+
 function bresenham(map, r1, c1, r2, c2) {
   let dr = Math.abs(r2-r1), dc = Math.abs(c2-c1);
   let sr = r1<r2 ? 1:-1, sc = c1<c2 ? 1:-1;
@@ -87,6 +91,14 @@ export function buildMap() {
     }
   });
 
+  // Special location pads
+  SPECIALS.forEach(({col,row})=>{
+    for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++){
+      const r=row+dr,c=col+dc;
+      if (r>1&&r<ROWS-2&&c>1&&c<COLS-2) map[r][c]=T.CITY;
+    }
+  });
+
   return map;
 }
 
@@ -98,6 +110,10 @@ export function isWalkable(c, r) {
   // Block building footprint: centre tile and the tile directly above it
   for (const city of CITIES) {
     if (city.col === c && (city.row === r || city.row - 1 === r)) return false;
+  }
+  // Block special location centre tile
+  for (const sp of SPECIALS) {
+    if (sp.col === c && sp.row === r) return false;
   }
 
   const t = MAP[r][c];

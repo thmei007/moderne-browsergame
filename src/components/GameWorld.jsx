@@ -1,17 +1,20 @@
 import { useRef, useEffect } from 'react';
-import { TILE, COLS, ROWS, MAP, CITIES, CITY_FULL_NAMES, isWalkable } from '../game/mapData.js';
-import { drawTile, drawBuilding, drawLabel, drawPrompt, drawPlayer } from '../game/renderer.js';
+import { TILE, COLS, ROWS, MAP, CITIES, SPECIALS, CITY_FULL_NAMES, isWalkable } from '../game/mapData.js';
+import { drawTile, drawBuilding, drawSpecial, drawLabel, drawPrompt, drawPlayer } from '../game/renderer.js';
 
 const START_COL = 14, START_ROW = 13;
 const MOVE_MS   = 140;   // ms per tile step
 
-export default function GameWorld({ onEnterCity, completedIds = [] }) {
-  const canvasRef      = useRef(null);
-  const nearRef        = useRef(null);
-  const completedRef   = useRef(completedIds);
-  const onEnterRef     = useRef(onEnterCity);
-  completedRef.current = completedIds;
-  onEnterRef.current   = onEnterCity;
+export default function GameWorld({ onEnterCity, onEnterMatching, completedIds = [] }) {
+  const canvasRef        = useRef(null);
+  const nearRef          = useRef(null);
+  const nearSpecialRef   = useRef(null);
+  const completedRef     = useRef(completedIds);
+  const onEnterRef       = useRef(onEnterCity);
+  const onMatchingRef    = useRef(onEnterMatching);
+  completedRef.current   = completedIds;
+  onEnterRef.current     = onEnterCity;
+  onMatchingRef.current  = onEnterMatching;
 
   // Prevent body scroll while game is active
   useEffect(() => {
@@ -51,8 +54,9 @@ export default function GameWorld({ onEnterCity, completedIds = [] }) {
     function onKeyDown(e) {
       s.keys[e.key] = true;
       if (['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) e.preventDefault();
-      if ((e.key==='e'||e.key==='E'||e.key==='Enter') && nearRef.current) {
-        onEnterRef.current(nearRef.current.id);
+      if (e.key==='e'||e.key==='E'||e.key==='Enter') {
+        if (nearRef.current)             onEnterRef.current(nearRef.current.id);
+        else if (nearSpecialRef.current) onMatchingRef.current?.();
       }
     }
     function onKeyUp(e) { s.keys[e.key] = false; }
@@ -102,6 +106,10 @@ export default function GameWorld({ onEnterCity, completedIds = [] }) {
                 Math.abs(city.col - s.col) <= 1 &&
                 Math.abs(city.row - s.row) <= 1
       ) ?? null;
+
+      nearSpecialRef.current = SPECIALS.find(
+        sp => Math.abs(sp.col - s.col) <= 1 && Math.abs(sp.row - s.row) <= 1
+      ) ?? null;
     }
 
     function render() {
@@ -125,6 +133,14 @@ export default function GameWorld({ onEnterCity, completedIds = [] }) {
         if (city.row <= playerRow) {
           drawBuilding(ctx, city.col, city.row, city.id, city.color, done.includes(city.id));
         }
+      });
+
+      // Special locations (always rendered, z-neutral)
+      SPECIALS.forEach(sp => {
+        const isNear = nearSpecialRef.current?.id === sp.id;
+        drawSpecial(ctx, sp.col, sp.row, sp.color, isNear);
+        drawLabel(ctx, sp.col, sp.row, sp.id, sp.name, sp.color, false, isNear);
+        if (isNear) drawPrompt(ctx, sp.col, sp.row, sp.id, sp.name, s.tick);
       });
 
       // Player (between the two building passes)
