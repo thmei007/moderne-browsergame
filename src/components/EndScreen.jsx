@@ -1,19 +1,11 @@
 import { TOTAL_QUESTIONS } from '../data/gameData';
 
 export default function EndScreen({ score, onRestart }) {
-  const percent = Math.round((score / TOTAL_QUESTIONS) * 100);
-
-  let rating, ratingText;
-  if (percent === 100) {
-    rating = '⭐⭐⭐';
-    ratingText = 'Meisterreporter der Moderne — Ihr Bericht wird Geschichte machen.';
-  } else if (percent >= 70) {
-    rating = '⭐⭐';
-    ratingText = 'Solide Kenntnisse — der Redakteur ist zufrieden.';
-  } else {
-    rating = '⭐';
-    ratingText = 'Guter Anfang — eine zweite Reise durch die Moderne würde nicht schaden.';
-  }
+  const pct = Math.round((score / TOTAL_QUESTIONS) * 100);
+  const [rating, text] =
+    pct === 100 ? ['⭐⭐⭐', 'Meisterreporter der Moderne — Ihr Bericht wird Geschichte machen.'] :
+    pct >= 70   ? ['⭐⭐',   'Solide Kenntnisse — der Redakteur ist zufrieden.'] :
+                  ['⭐',     'Guter Anfang — eine zweite Reise würde nicht schaden.'];
 
   return (
     <div className="end-screen">
@@ -21,11 +13,11 @@ export default function EndScreen({ score, onRestart }) {
         <div className="end-tag">Reise abgeschlossen</div>
         <h2 className="end-title">Dein Bericht ist fertig.</h2>
         <div className="end-rating">{rating}</div>
-        <p className="end-rating-text">{ratingText}</p>
+        <p className="end-rating-text">{text}</p>
         <div className="end-score-box">
           <span className="end-score-number">{score}</span>
           <span className="end-score-of"> / {TOTAL_QUESTIONS}</span>
-          <span className="end-score-label">Fragen beim ersten Versuch richtig beantwortet</span>
+          <span className="end-score-label">Fragen beim ersten Versuch richtig</span>
         </div>
         <div className="end-summary">
           <h3>Was du auf dieser Reise gelernt hast:</h3>
@@ -36,9 +28,7 @@ export default function EndScreen({ score, onRestart }) {
             <li><strong>Weimar ~1925:</strong> Neue Sachlichkeit, Döblin, Brechts V-Effekt</li>
           </ul>
         </div>
-        <button className="btn-secondary" onClick={onRestart}>
-          Nochmal reisen
-        </button>
+        <button className="btn-ghost" onClick={onRestart}>Nochmal reisen</button>
       </div>
     </div>
   );

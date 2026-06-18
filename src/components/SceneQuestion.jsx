@@ -1,58 +1,47 @@
 import { useState, useMemo } from 'react';
 
 function shuffle(arr) {
-  const a = arr.map((item, i) => ({ item, sort: Math.random() }));
-  a.sort((x, y) => x.sort - y.sort);
-  return a.map(({ item }) => item);
+  return [...arr].map(item => ({ item, s: Math.random() }))
+    .sort((a, b) => a.s - b.s).map(({ item }) => item);
 }
 
 export default function SceneQuestion({ scene, onCorrect }) {
-  const shuffledOptions = useMemo(
-    () => shuffle(scene.question.options),
-    [scene.id]
-  );
+  const options  = useMemo(() => shuffle(scene.question.options), [scene.id]);
+  const [sel, setSel]       = useState(null);
+  const [shown, setShown]   = useState(false);
 
-  const [selected, setSelected] = useState(null);
-  const [showFeedback, setShowFeedback] = useState(false);
-
-  function handleSelect(index) {
-    if (showFeedback) return;
-    setSelected(index);
-    setShowFeedback(true);
+  function pick(i) {
+    if (shown) return;
+    setSel(i); setShown(true);
   }
 
-  const isCorrect = selected !== null && shuffledOptions[selected].correct;
+  const correct = sel !== null && options[sel].correct;
 
   return (
     <div className="scene">
       <div className="scene-header">
-        <span className="character-portrait">{scene.portrait}</span>
-        <span className="character-name">{scene.character}</span>
+        <div className="character-portrait">{scene.portrait}</div>
+        <div className="character-info">
+          <div className="character-name">{scene.character}</div>
+        </div>
       </div>
 
       <div className="scene-narrative">
-        {scene.narrative.split('\n').map((line, i) => (
-          <p key={i}>{line}</p>
-        ))}
+        {scene.narrative.split('\n').map((l, i) => <p key={i}>{l}</p>)}
       </div>
 
       <div className="question-block">
         <p className="question-text">{scene.question.text}</p>
         <div className="options-grid">
-          {shuffledOptions.map((opt, i) => {
+          {options.map((opt, i) => {
             let cls = 'option-btn';
-            if (showFeedback) {
-              if (opt.correct) cls += ' correct';
-              else if (i === selected && !opt.correct) cls += ' wrong';
+            if (shown) {
+              if (opt.correct)              cls += ' correct';
+              else if (i === sel)           cls += ' wrong';
             }
-            if (i === selected) cls += ' selected';
+            if (i === sel) cls += ' selected';
             return (
-              <button
-                key={opt.text}
-                className={cls}
-                onClick={() => handleSelect(i)}
-                disabled={showFeedback}
-              >
+              <button key={opt.text} className={cls} onClick={() => pick(i)} disabled={shown}>
                 <span className="option-letter">{String.fromCharCode(65 + i)}</span>
                 {opt.text}
               </button>
@@ -61,19 +50,12 @@ export default function SceneQuestion({ scene, onCorrect }) {
         </div>
       </div>
 
-      {showFeedback && (
-        <div className={`feedback-box ${isCorrect ? 'feedback-correct' : 'feedback-wrong'}`}>
-          <div className="feedback-header">
-            {isCorrect ? '✓ Richtig!' : '✗ Nicht ganz.'}
-          </div>
-          <p className="feedback-explanation">
-            {shuffledOptions[selected].explanation}
-          </p>
-          <button
-            className="btn-primary"
-            onClick={() => onCorrect(isCorrect)}
-          >
-            {isCorrect ? 'Weiter →' : 'Nochmal verstanden — weiter →'}
+      {shown && (
+        <div className={`feedback-box ${correct ? 'feedback-correct' : 'feedback-wrong'}`}>
+          <div className="feedback-header">{correct ? '✓ Richtig!' : '✗ Nicht ganz.'}</div>
+          <p className="feedback-explanation">{options[sel].explanation}</p>
+          <button className="btn-primary" onClick={() => onCorrect(correct)}>
+            {correct ? 'Weiter →' : 'Verstanden — weiter →'}
           </button>
         </div>
       )}

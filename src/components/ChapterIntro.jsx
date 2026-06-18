@@ -7,13 +7,9 @@ export default function ChapterIntro({ chapter, onContinue }) {
         <p className="chapter-subtitle">{chapter.subtitle}</p>
         <div className="chapter-divider" />
         <div className="chapter-narrative">
-          {chapter.intro.split('\n\n').map((para, i) => (
-            <p key={i}>{para}</p>
-          ))}
+          {chapter.intro.split('\n\n').map((para, i) => <p key={i}>{para}</p>)}
         </div>
-        <button className="btn-primary" onClick={onContinue}>
-          Weiter →
-        </button>
+        <button className="btn-primary" onClick={onContinue}>Weiter →</button>
       </div>
     </div>
   );
