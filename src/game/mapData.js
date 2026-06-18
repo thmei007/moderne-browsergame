@@ -36,6 +36,10 @@ export const CITY_FULL_NAMES = {
   wien:   'Wien',
 };
 
+export const SPECIALS = [
+  { id: 'matching', name: 'Redaktion', col: 13, row: 16, color: '#c09040' },
+];
+
 function bresenham(map, r1, c1, r2, c2) {
   let dr = Math.abs(r2-r1), dc = Math.abs(c2-c1);
   let sr = r1<r2 ? 1:-1, sc = c1<c2 ? 1:-1;
@@ -81,6 +85,14 @@ export function buildMap() {
 
   // City pads (3×3 walkable area around each city center)
   CITIES.forEach(({col,row})=>{
+    for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++){
+      const r=row+dr,c=col+dc;
+      if (r>1&&r<ROWS-2&&c>1&&c<COLS-2) map[r][c]=T.CITY;
+    }
+  });
+
+  // Special location pads
+  SPECIALS.forEach(({col,row})=>{
     for (let dr=-1;dr<=1;dr++) for (let dc=-1;dc<=1;dc++){
       const r=row+dr,c=col+dc;
       if (r>1&&r<ROWS-2&&c>1&&c<COLS-2) map[r][c]=T.CITY;

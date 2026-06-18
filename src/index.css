@@ -699,3 +699,105 @@ body {
   font-size: .9rem; color: var(--text2); padding-left: 1rem;
   border-left: 2px solid var(--gold); line-height: 1.6;
 }
+
+/* ═══════════════════════════════════════
+   MATCHING GAME
+═══════════════════════════════════════ */
+@keyframes shake {
+  0%,100% { transform: none; }
+  20%     { transform: translateX(-7px); }
+  40%     { transform: translateX(7px); }
+  60%     { transform: translateX(-4px); }
+  80%     { transform: translateX(4px); }
+}
+
+.matching-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+@media (max-width: 520px) {
+  .matching-board { grid-template-columns: 1fr; }
+}
+
+.matching-col { display: flex; flex-direction: column; gap: .4rem; }
+
+.matching-col-label {
+  font-family: var(--mono);
+  font-size: .63rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--gdim);
+  margin-bottom: .35rem;
+}
+
+.matching-card {
+  display: flex;
+  align-items: center;
+  gap: .55rem;
+  width: 100%;
+  text-align: left;
+  padding: .7rem .95rem;
+  background: var(--ink2);
+  border: 1px solid var(--b1);
+  font-family: var(--body);
+  font-size: .88rem;
+  color: var(--text2);
+  cursor: pointer;
+  transition: border-color .15s, background .15s, color .15s, box-shadow .15s;
+  line-height: 1.4;
+  min-height: 46px;
+}
+.matching-card:hover:not(:disabled):not(.mg-matched) {
+  border-color: var(--b2);
+  background: var(--ink3);
+  color: var(--text);
+}
+.matching-card.mg-selected {
+  border-color: var(--gold);
+  background: var(--ink3);
+  color: var(--cream);
+  box-shadow: 0 0 0 1px #c0904030, inset 0 0 12px #c0904010;
+}
+.matching-card.mg-active:hover:not(:disabled) {
+  border-color: var(--gold);
+  background: var(--ink3);
+}
+.matching-card.mg-matched {
+  border-color: #2a7a3a;
+  background: #0a1e0e;
+  color: #68d878;
+  cursor: default;
+  pointer-events: none;
+}
+.matching-card.mg-wrong {
+  border-color: #7a2020;
+  color: #d86868;
+  animation: shake .5s ease;
+}
+.matching-card:disabled:not(.mg-matched) {
+  opacity: .45;
+  cursor: default;
+}
+
+.mg-check {
+  font-size: .75rem;
+  color: #68d878;
+  flex-shrink: 0;
+}
+
+.matching-hint {
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .07em;
+  color: var(--text3);
+  margin-bottom: 1rem;
+  padding: .45rem .8rem;
+  border-left: 2px solid var(--b1);
+  transition: color .2s, border-color .2s;
+}
+.matching-hint.active {
+  color: var(--gold);
+  border-color: var(--gold);
+}

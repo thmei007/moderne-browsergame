@@ -238,6 +238,22 @@ Im Romanischen Café triffst du eine Journalistin. Sie schreibt Reportagen für 
 Aber zuerst musst du die letzte Prüfung bestehen. Diese Fragen verbinden alles, was du erlebt hast — Wien, Berlin, Prag, Weimar. Nur wer die Epoche als Ganzes versteht, kann den Bericht schreiben.`,
     scenes: [
       {
+        id: "finale_matching",
+        type: "matching",
+        character: "Dein Redakteur",
+        portrait: "📋",
+        narrative: `„Bevor wir anfangen — ein Test aus dem Stegreif. Das Miro-Board zeigt sechs Autoren der literarischen Moderne, jeder mit einem Schlagwort. Verbinden Sie jeden Autor mit seinem Schlagwort.\n\nKlicken Sie zuerst auf einen Autor, dann auf das passende Schlagwort."`,
+        pairs: [
+          { left: "Franz Kafka",      right: "Aufstand & Verletzung" },
+          { left: "Alfred Döblin",    right: "Montage & Großstadt" },
+          { left: "Virginia Woolf",   right: "Bewusstseinsstrom" },
+          { left: "Thomas Mann",      right: "Neue Sachlichkeit" },
+          { left: "Bertolt Brecht",   right: "Verfremdungseffekt" },
+          { left: "James Joyce",      right: "Stream of Consciousness" },
+        ],
+        successText: "Perfekt! Das sind die sechs Autoren-Cards aus dem Miro-Board — jede mit ihrer literarischen Signatur. Jetzt zu den letzten Fragen. Zeigen Sie, dass Sie die Epoche als Ganzes verstehen.",
+      },
+      {
         id: "finale_1",
         character: "Dein Redakteur",
         portrait: "📋",

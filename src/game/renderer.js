@@ -135,6 +135,63 @@ export function drawBuilding(ctx, col, row, color, done) {
   ctx.globalAlpha = 1;
 }
 
+// ── Special location building (Redaktion etc.) ───────────────────
+export function drawSpecial(ctx, col, row, color, isNear) {
+  const bx = col*TILE - 7, by = row*TILE - 22;
+
+  // Shadow
+  ctx.fillStyle = '#060408';
+  ctx.fillRect(bx+2,by+30,26,3);
+
+  // Body
+  ctx.fillStyle = '#1c1a0c';
+  ctx.fillRect(bx,by+10,26,22);
+
+  // Brickwork
+  ctx.fillStyle = '#242210';
+  for (let fy=0;fy<2;fy++) for (let fx=0;fx<2;fx++)
+    ctx.fillRect(bx+1+fx*12,by+12+fy*8,11,7);
+
+  // Windows (gold when near)
+  ctx.fillStyle = isNear ? color+'cc' : '#221e0a';
+  [[3,11],[16,11],[3,20],[16,20]].forEach(([wx,wy]) => {
+    ctx.fillRect(bx+wx,by+wy,5,5);
+    if (isNear) {
+      ctx.fillStyle = '#ffffff18';
+      ctx.fillRect(bx+wx,by+wy,3,2);
+      ctx.fillStyle = color+'cc';
+    }
+  });
+
+  // Door
+  ctx.fillStyle = '#0e0c06';
+  ctx.fillRect(bx+10,by+26,6,6);
+
+  // Cornice
+  ctx.fillStyle = '#2a2614';
+  ctx.fillRect(bx-1,by+8,28,3);
+  ctx.fillStyle = color+'66';
+  ctx.fillRect(bx,by+8,26,1);
+
+  // Flat roof with parapet notches
+  ctx.fillStyle = '#1e1c0c';
+  ctx.fillRect(bx+1,by+2,24,7);
+  ctx.fillStyle = color+'55';
+  [1,7,13,19].forEach(nx => ctx.fillRect(bx+nx,by+2,4,3));
+
+  // Flagpole + flag
+  ctx.fillStyle = '#2a2414';
+  ctx.fillRect(bx+12,by-4,1,6);
+  ctx.fillStyle = color;
+  ctx.fillRect(bx+13,by-4,5,3);
+
+  // Ground glow when near
+  if (isNear) {
+    ctx.fillStyle = color+'22';
+    ctx.fillRect(bx-4,by+28,34,6);
+  }
+}
+
 // ── City name label ──────────────────────────────────────────────
 export function drawLabel(ctx, col, row, name, color, done, isNear) {
   const cx=col*TILE+TILE/2, cy=row*TILE-32;
