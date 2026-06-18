@@ -503,3 +503,215 @@ body {
   padding-left: 1rem;
   border-left: 2px solid var(--gold);
 }
+
+/* ── City Selector ── */
+@keyframes csOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes csPanelIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes cityPulse {
+  0%, 100% { transform: scale(1);   opacity: 0.8; }
+  50%       { transform: scale(1.2); opacity: 1;   }
+}
+
+.cs-overlay {
+  position: fixed; inset: 0;
+  background: rgba(10, 7, 3, 0.92);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200;
+  animation: csOverlayIn 0.3s ease;
+}
+
+.cs-panel {
+  background: #0e0b06;
+  border: 3px solid var(--gold);
+  box-shadow: 0 0 0 1px #2a1f0a, 0 24px 60px rgba(0,0,0,0.8), inset 0 0 40px rgba(184,146,74,0.04);
+  animation: csPanelIn 0.35s ease;
+  overflow: hidden;
+}
+
+.cs-header {
+  display: flex; align-items: center; justify-content: center; gap: 1.2rem;
+  padding: 1.1rem 2rem 0.9rem;
+  border-bottom: 1px solid #2a1f0a;
+  background: linear-gradient(180deg, rgba(184,146,74,0.06) 0%, transparent 100%);
+}
+
+.cs-title {
+  font-family: var(--font-serif);
+  font-size: 0.9rem;
+  font-weight: normal;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.cs-orn {
+  color: var(--gold);
+  font-size: 0.65rem;
+  opacity: 0.7;
+}
+
+/* Map area */
+.cs-map {
+  position: relative;
+  background:
+    linear-gradient(160deg, #c8a850 0%, #b89040 30%, #a07828 60%, #c09848 100%);
+  overflow: hidden;
+  border-bottom: 1px solid #2a1f0a;
+}
+
+.cs-map-grid {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    linear-gradient(rgba(80,50,10,0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(80,50,10,0.12) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.cs-svg {
+  position: absolute; inset: 0; pointer-events: none;
+}
+
+/* Compass */
+.cs-compass {
+  position: absolute; bottom: 12px; left: 14px;
+  font-family: var(--font-sans);
+  font-size: 9px;
+  color: rgba(80,50,10,0.6);
+  user-select: none;
+  pointer-events: none;
+}
+.cs-compass-n {
+  text-align: center;
+  font-weight: bold;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+}
+.cs-compass-cross {
+  display: grid;
+  grid-template-columns: 1fr 14px 1fr;
+  grid-template-rows: 1fr 1fr;
+  font-size: 8px;
+  line-height: 1.2;
+  text-align: center;
+}
+.cs-compass-cross span:nth-child(1) { grid-column: 2; }
+.cs-compass-cross span:nth-child(2) { grid-column: 2; }
+.cs-compass-cross span:nth-child(3) { grid-column: 1; grid-row: 2; align-self: center; }
+.cs-compass-cross span:nth-child(4) { grid-column: 3; grid-row: 2; align-self: center; }
+
+/* City markers */
+.cs-city-glow {
+  position: absolute; left: -14px; top: -14px;
+  width: 52px; height: 52px; border-radius: 50%;
+  animation: cityPulse 1.2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.cs-city-marker {
+  position: relative;
+  width: 24px; height: 24px;
+  border: 2px solid;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  image-rendering: pixelated;
+}
+.cs-city-marker:hover { transform: scale(1.15); }
+.cs-city-active { transform: scale(1.1) !important; }
+
+.cs-city-flag {
+  position: absolute;
+  top: 2px; right: 3px;
+  width: 6px; height: 4px;
+  opacity: 0.8;
+}
+
+.cs-city-label {
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  top: 28px;
+  padding: 3px 9px 4px;
+  border: 1px solid;
+  white-space: nowrap;
+  font-family: var(--font-serif);
+  font-size: 10px;
+  letter-spacing: 0.07em;
+  transition: all 0.2s;
+  pointer-events: none;
+}
+.cs-city-label-active {
+  font-weight: bold;
+}
+
+/* Player character */
+.cs-player {
+  position: absolute;
+  image-rendering: pixelated;
+  width: 20px; height: 28px;
+  transition: left 0.09s linear, top 0.09s linear;
+  z-index: 10;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.6));
+}
+
+/* Info bar */
+.cs-infobar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.5rem;
+  min-height: 56px;
+  background: linear-gradient(180deg, rgba(184,146,74,0.05) 0%, transparent 100%);
+}
+
+.cs-infobar-city {
+  display: flex; flex-direction: column; gap: 2px;
+}
+.cs-infobar-name {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  color: var(--gold-light);
+  letter-spacing: 0.05em;
+}
+.cs-infobar-sub {
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  color: var(--ink-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cs-infobar-hint {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  color: #3a3020;
+  letter-spacing: 0.06em;
+  width: 100%;
+  text-align: center;
+}
+
+.cs-infobar-btn {
+  background: var(--gold);
+  color: var(--ink);
+  border: none;
+  padding: 0.55rem 1.2rem;
+  font-family: var(--font-sans);
+  font-size: 0.8rem;
+  font-weight: bold;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex; align-items: center; gap: 0.5rem;
+  transition: background 0.15s, transform 0.1s;
+}
+.cs-infobar-btn:hover { background: var(--gold-light); }
+.cs-infobar-btn:active { transform: scale(0.97); }
+.cs-infobar-btn kbd {
+  background: rgba(0,0,0,0.2);
+  border-radius: 2px;
+  padding: 1px 5px;
+  font-size: 0.85em;
+}

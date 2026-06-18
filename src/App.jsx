@@ -5,9 +5,11 @@ import ChapterIntro from './components/ChapterIntro';
 import SceneQuestion from './components/SceneQuestion';
 import ProgressBar from './components/ProgressBar';
 import EndScreen from './components/EndScreen';
+import CitySelector from './components/CitySelector';
 
 const PHASE = {
   START: 'start',
+  CITY_SELECT: 'city_select',
   CHAPTER_INTRO: 'chapter_intro',
   SCENE: 'scene',
   END: 'end',
@@ -34,7 +36,11 @@ export default function App() {
   ) + state.sceneIndex;
 
   function startGame() {
-    setState({ ...initialState(), phase: PHASE.CHAPTER_INTRO });
+    setState({ ...initialState(), phase: PHASE.CITY_SELECT });
+  }
+
+  function handleCitySelect(cityId) {
+    setState(s => ({ ...s, selectedCity: cityId, phase: PHASE.CHAPTER_INTRO }));
   }
 
   function startScenes() {
@@ -62,6 +68,10 @@ export default function App() {
 
   if (state.phase === PHASE.START) {
     return <StartScreen onStart={startGame} />;
+  }
+
+  if (state.phase === PHASE.CITY_SELECT) {
+    return <CitySelector onSelect={handleCitySelect} />;
   }
 
   if (state.phase === PHASE.END) {
